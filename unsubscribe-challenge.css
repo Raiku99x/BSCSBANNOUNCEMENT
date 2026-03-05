@@ -1,0 +1,250 @@
+/* ============================================================
+   unsubscribe-challenge.css
+   Unsubscribe challenge modal styles
+   ============================================================ */
+
+/* ── OVERLAY ────────────────────────────────────────────────── */
+.unsub-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 350;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+  padding: 16px;
+}
+.unsub-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── MODAL ──────────────────────────────────────────────────── */
+.unsub-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 26px 24px 22px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transform: scale(0.93) translateY(10px);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+}
+.unsub-overlay.open .unsub-modal {
+  transform: scale(1) translateY(0);
+}
+
+/* ── HEADER ─────────────────────────────────────────────────── */
+.unsub-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.unsub-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: var(--red-lt);
+  border: 1.5px solid rgba(220, 38, 38, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--red);
+  margin-bottom: 2px;
+}
+.unsub-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+}
+.unsub-subtitle {
+  font-size: 12px;
+  color: var(--sub);
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+/* ── CODE DISPLAY (plain text) ──────────────────────────────── */
+.unsub-code-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.unsub-code-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sub);
+}
+.unsub-code-text {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text);
+  word-break: break-all;
+  line-height: 1.6;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  pointer-events: none;
+}
+
+/* ── INPUT ──────────────────────────────────────────────────── */
+.unsub-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.unsub-input {
+  width: 100%;
+  background: var(--surf2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 13px;
+  
+  font-size: 13px;
+  
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.18s, background 0.18s;
+  
+  caret-color: var(--accent);
+}
+.unsub-input::placeholder {
+  color: var(--sub);
+  
+  font-weight: 400;
+  font-size: 13px;
+  
+}
+.unsub-input:focus {
+  border-color: var(--accent);
+  background: var(--surf3);
+}
+.unsub-input.valid {
+  border-color: var(--green) !important;
+  background: var(--grn-lt);
+  color: var(--green);
+}
+.unsub-input.partial {
+  border-color: var(--amber);
+  background: var(--amb-lt);
+}
+.unsub-input.error {
+  border-color: var(--red);
+  background: var(--red-lt);
+  animation: inputShake 0.25s ease;
+}
+@keyframes inputShake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-4px); }
+  75%       { transform: translateX(4px); }
+}
+
+/* ── HINT TEXT ──────────────────────────────────────────────── */
+.unsub-input-hint {
+  font-size: 11px;
+  
+  min-height: 16px;
+  transition: color 0.15s;
+  color: transparent;
+}
+.unsub-input-hint.valid   { color: var(--green); }
+.unsub-input-hint.partial { color: var(--amber); }
+.unsub-input-hint.error   { color: var(--red); }
+.unsub-input-hint.warn    { color: var(--red); }
+
+/* ── PROGRESS BAR ───────────────────────────────────────────── */
+.unsub-progress-track {
+  height: 4px;
+  background: var(--surf3);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: -8px;
+}
+.unsub-progress-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  background: var(--border);
+  transition: width 0.15s ease, background 0.2s ease;
+}
+.unsub-progress-bar.partial { background: var(--amber); }
+.unsub-progress-bar.done    { background: var(--green); }
+
+/* ── ACTIONS ────────────────────────────────────────────────── */
+.unsub-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+/* Keep Notifications — outlined, pressable look */
+.unsub-btn-cancel {
+  flex: 1;
+  background: var(--surface);
+  border: 2px solid var(--text);
+  border-radius: 10px;
+  padding: 11px;
+  
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 2px 0 var(--text);
+}
+.unsub-btn-cancel:hover {
+  background: var(--surf2);
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--text);
+}
+.unsub-btn-cancel:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+body.dark .unsub-btn-cancel {
+  border-color: var(--text);
+  color: var(--text);
+  box-shadow: 0 2px 0 rgba(240, 238, 232, 0.4);
+}
+body.dark .unsub-btn-cancel:hover {
+  box-shadow: 0 1px 0 rgba(240, 238, 232, 0.4);
+}
+body.dark .unsub-btn-cancel:active {
+  box-shadow: none;
+}
+
+/* Disable — red, standard */
+.unsub-btn-confirm {
+  flex: 1;
+  background: var(--red);
+  border: none;
+  border-radius: 10px;
+  padding: 11px;
+  
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+}
+.unsub-btn-confirm:not(:disabled):hover { opacity: 0.85; }
+.unsub-btn-confirm:disabled {
+  background: var(--surf3);
+  color: var(--sub);
+  cursor: not-allowed;
+  opacity: 1;
+}
