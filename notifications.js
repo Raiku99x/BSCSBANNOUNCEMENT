@@ -9,7 +9,7 @@ const _notifSb = supabase.createClient(
 // ============================================================
 
 // ─── VAPID PUBLIC KEY ──────────────
-const VAPID_PUBLIC_KEY = 'BDB28hUn4e2av41itWZ8NP2hryHALsKH2OHomYfNCkWI6rTLwTJEbTNtotHf2jz663NB5DdLI-hkyC3jsck_8iU';
+const VAPID_PUBLIC_KEY = 'BNepFRjteIr1CG7v1fHjxA-BllIwCooRpaUYf2DMPaLUYsSh6IbPfIkESz9gkYsr9MD_dN70dylJ3196fbD1aUw';
 
 let _swRegistration = null;
 let _notifPermission = Notification?.permission || 'default';
