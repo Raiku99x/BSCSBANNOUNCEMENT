@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#f4f3f0"/>
+<title>BSCS1B</title>
+<link rel="icon" href="/favicon.ico"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+<link rel="stylesheet" href="featured-patch.css"/>
+<link rel="stylesheet" href="unsubscribe-challenge.css"/>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="logo">BSC<span>S1B</span></div>
+  <div class="topbar-right">
+    <div class="sync-indicator" id="syncIndicator" title="Sync status">
+      <span class="sync-dot"></span>
+      <span class="sync-label" id="syncLabel">Connecting…</span>
+    </div>
+
+    <button class="role-btn admin" id="adminBtn" onclick="clickAdminBtn()">Admin</button>
+    <button class="role-btn user" id="userBtn" onclick="userBtnClick()">User</button>
+  </div>
+</header>
+
+<!-- DATE BAR -->
+<div class="date-bar" id="dateBar">
+  <div class="date-bar-side">
+    <button class="icon-bar" id="fullscreenBtn" onclick="toggleFullscreen()" title="Fullscreen">
+      <svg id="fsIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+        <path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+        <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+        <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+      </svg>
+    </button>
+    <!-- 🔔 NOTIFICATION BELL -->
+<button class="icon-bar notif-bell" id="notifBellBtn" onclick="toggleNotifications()" title="Enable task notifications">
+  <svg id="notifBellIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+    </button>
+
+  </div>
+  <div class="date-bar-center" id="dateBarText"></div>
+<div class="date-bar-side right">
+    <button class="icon-bar" onclick="location.reload()" title="Refresh">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <polyline points="23 4 23 10 17 10"/>
+        <polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+    </button>
+    <button class="icon-bar" onclick="toggleTheme()" title="Toggle Theme" id="themeBtn">
+      <svg id="themeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- APP BODY -->
+<div class="app-body">
+
+  <!-- TOP PANEL -->
+  <div class="top-panel">
+    <div class="sidebar">
+      <button class="filter-btn f-all" onclick="setFilter('all')">
+    <span class="f-dot"></span>All<span class="filter-count" id="cnt-all">0</span>
+      </button>
+      <button class="filter-btn f-active active" onclick="setFilter('active')">
+    <span class="f-dot"></span>Active<span class="filter-count" id="cnt-active">0</span>
+    </button>
+      <button class="filter-btn f-soon" onclick="setFilter('soon')">
+        <span class="f-dot"></span>Soon<span class="filter-count" id="cnt-soon">0</span>
+      </button>
+      <button class="filter-btn f-today" onclick="setFilter('today')">
+        <span class="f-dot"></span>Today<span class="filter-count" id="cnt-today">0</span>
+      </button>
+      <button class="filter-btn f-overdue" onclick="setFilter('overdue')">
+        <span class="f-dot"></span>Overdue<span class="filter-count" id="cnt-overdue">0</span>
+      </button>
+      <button class="filter-btn f-done" onclick="setFilter('done')">
+        <span class="f-dot"></span>Done<span class="filter-count" id="cnt-done">0</span>
+      </button>
+      <button class="filter-btn f-cancelled" onclick="setFilter('cancelled')">
+        <span class="f-dot"></span>Cancelled<span class="filter-count" id="cnt-cancelled">0</span>
+      </button>
+    </div>
+    
+    <div class="featured-panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="featured-label">Featured <span id="featCount" style="font-size:10px;background:var(--accent);color:#fff;border-radius:20px;padding:1px 7px;margin-left:4px;display:none;vertical-align:middle;"></span></div>
+         <!-- 
+  <button class="add-note-btn" id="addNoteBtn" onclick="openNoteModal()">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add Note
+  </button>
+  -->
+      </div>
+      <div id="notesList"></div>
+      <div id="featuredList"></div>
+      <div class="daily-tip" id="dailyTip"></div>
+    </div>
+  </div>
+
+  <!-- ALL TASK HEADER -->
+  <div class="all-task-header">
+    <span class="all-task-title" id="taskAreaTitle">All Tasks</span>
+    <span class="task-count-badge" id="taskCountBadge">0</span>
+    <div class="header-right">
+      <button class="search-btn" onclick="toggleSearch()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="add-task-btn" id="addBtn" onclick="openModal()" title="Add Task">
+        + Add Task
+      </button>
+    </div>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar" id="searchBar">
+    <input class="search-input" id="searchInput" type="text" placeholder="Search tasks…" oninput="debouncedSearch()"/>
+  </div>
+
+  <!-- TASK LIST -->
+  <div class="task-area" id="taskArea"></div>
+
+</div>
+
+<!-- ADD/EDIT TASK MODAL -->
+<div class="overlay" id="overlay" onclick="handleOverlay(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitle">Add Task</div>
+    <div class="form-group">
+      <label class="form-label">Task Name *</label>
+      <input class="form-control" id="fName" type="text" placeholder="e.g. Submit Chemistry quiz"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select class="form-control" id="fCat">
+        <option value="quiz">Quiz</option>
+        <option value="project">Project</option>
+        <option value="assignment">Assignment</option>
+        <option value="exam">Exam</option>
+        <option value="study">Study</option>
+        <option value="review">Review</option>
+        <option value="output">Output</option>
+        <option value="online">Online Class</option>
+        <option value="info">Info</option>
+        <option value="fees">Fees</option>
+        <option value="suspension">Suspension</option>
+        <option value="noclasses">No Classes</option>
+        <option value="event">Event</option>
+        <option value="fillup">Fill Up</option>
+        <option value="learning">Learning Task</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Due Date</label><input class="form-control" id="fDate" type="date"/></div>
+      <div class="form-group"><label class="form-label">Due Time</label><input class="form-control" id="fTime" type="time"/></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description / Notes</label>
+      <textarea class="form-control" id="fNotes" placeholder="Details, links, reminders…"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN MODAL -->
+<div class="login-overlay" id="loginOverlay" onclick="handleLoginOverlay(event)">
+  <div class="login-modal" id="loginModal">
+    <div class="login-header">
+      <div class="login-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <div class="login-title">Admin Access</div>
+      <div class="login-sub">Enter your credentials to manage tasks</div>
+    </div>
+    <div class="login-error" id="loginError">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="loginErrorMsg">Invalid username or password.</span>
+    </div>
+    <div class="login-form-group">
+      <label class="login-label">Username</label>
+      <input class="login-input" id="loginUser" type="text" placeholder="Enter username" autocomplete="username"/>
+    </div>
+    <div class="login-form-group">
+      <label class="login-label">Password</label>
+      <input class="login-input" id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')attemptLogin()"/>
+    </div>
+    <div class="login-actions">
+      <button class="btn-login-cancel" onclick="closeLoginModal()">Cancel</button>
+      <button class="btn-login-go" onclick="attemptLogin()">Login →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="handleLightboxClick(event)">
+  <button class="lb-close" onclick="closeLightbox()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div class="lb-del-wrap" id="lbDelWrap">
+    <button class="lb-del" id="lbDelBtn" onclick="lbDeleteImg()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    </button>
+  </div>
+  <button class="lb-nav lb-prev" id="lbPrev" onclick="lbNav(-1)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <img id="lightboxImg" src="" alt=""/>
+  <button class="lb-nav lb-next" id="lbNext" onclick="lbNav(+1)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <div class="lb-counter" id="lbCounter"></div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="del-overlay" id="delOverlay">
+  <div class="del-modal" id="delModal">
+    <div class="del-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+    </div>
+    <div class="del-title">Delete Task?</div>
+    <div class="del-sub" id="delSubText">This action cannot be undone.</div>
+    <div class="del-actions">
+      <button class="del-btn-cancel" onclick="closeDelModal()">Cancel</button>
+      <button class="del-btn-confirm" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGOUT CONFIRM MODAL -->
+<div class="del-overlay" id="logoutOverlay">
+  <div class="del-modal" id="logoutModal">
+    <div class="del-icon" style="background:var(--red-lt);border-color:var(--red);">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </div>
+    <div class="del-title">Log Out?</div>
+    <div class="del-sub">You'll need to log in again to make changes.</div>
+    <div class="del-actions">
+      <button class="del-btn-cancel" onclick="closeLogoutModal()">Cancel</button>
+      <button class="del-btn-confirm" onclick="confirmLogout()">Log Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO DELETE CONFIRM MODAL -->
+<div class="del-overlay" id="photoDelOverlay">
+  <div class="del-modal" id="photoDelModal">
+    <div class="del-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+      </svg>
+    </div>
+    <div class="del-title">Delete Photo?</div>
+    <div class="del-sub">This photo will be permanently removed.</div>
+    <div class="del-actions">
+      <button class="del-btn-cancel" onclick="closePhotoDelModal()">Cancel</button>
+      <button class="del-btn-confirm" onclick="confirmPhotoDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- CANCEL CONFIRM MODAL -->
+<div class="del-overlay" id="cancelOverlay">
+  <div class="del-modal" id="cancelModal">
+    <div class="del-icon" style="background:var(--amb-lt);border-color:var(--amber);">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+    </div>
+    <div class="del-title">Cancel Task?</div>
+    <div class="del-sub" id="cancelSubText">This task will be moved to the Cancelled filter.</div>
+    <div class="del-actions">
+      <button class="del-btn-cancel" onclick="closeCancelModal()">Go Back</button>
+      <button class="del-btn-confirm" style="background:var(--amber);" onclick="confirmCancel()">Cancel Task</button>
+    </div>
+  </div>
+</div>
+  
+<!-- ADD NOTE MODAL -->
+<div class="overlay" id="noteOverlay" onclick="handleNoteOverlay(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📌 Post a Note</div>
+    <div class="form-group">
+      <label class="form-label">Note Content *</label>
+      <textarea class="form-control" id="nText" placeholder="Write your announcement or reminder here…" style="min-height:90px;"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Visible For</label>
+      <select class="form-control" id="nExpiry">
+        <option value="1">1 Day</option>
+        <option value="3" selected>3 Days</option>
+        <option value="7">1 Week</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeNoteModal()">Cancel</button>
+      <button class="btn-save" onclick="saveNote()" style="background:var(--amber);">Post Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREDITS -->
+<div class="credits-badge">
+  <svg width="14" height="14" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;margin-right:4px;">
+    <polygon points="3,6 5.5,1 8,6 5.5,9" fill="currentColor"/>
+    <line x1="2" y1="2" x2="9" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <polygon points="16,6 18.5,1 21,6 18.5,9" fill="currentColor"/>
+    <line x1="15" y1="2" x2="22" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M 0,13 Q 5,9 12,9 Q 19,9 24,13 Q 22,30 12,30 Q 2,30 0,13 Z" fill="currentColor" opacity="0.13"/>
+    <path d="M 0,13 Q 5,9 12,9 Q 19,9 24,13" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M 0,13 Q 2,30 12,30 Q 22,30 24,13" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <polyline points="1,13 3,20 5,13 7,21 9,13 11,22.5 13,13 15,21 17,13 19,20 21,13 23,13"
+      stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="miter" stroke-linecap="square"/>
+  </svg>Admin Kandiaru
+</div>
+
+<input type="file" id="imgUpload" accept="image/*" multiple onchange="handleImgUpload(event)"/>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+<!-- Push Notifications (must be after app.js so _sb is available) -->
+<script src="notifications.js"></script>
+<script src="unsubscribe-challenge.js"></script>
+<script src="featured-patch.js"></script>
+  
+<!-- HELP BUTTON -->
+<button class="help-fab" id="helpBtn" onclick="openHelp()" title="Help & Guide">
+  ?
+</button>
+
+<!-- HELP MODAL OVERLAY -->
+<div class="help-overlay" id="helpOverlay" onclick="handleHelpOverlay(event)">
+  <div class="help-modal" id="helpModal">
+
+    <div class="help-modal-header">
+      <div class="help-modal-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        How to Use BSCS1B TASK APP
+      </div>
+      <button class="help-close-btn" onclick="closeHelp()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+<!-- ============================================================
+  REPLACE the entire <div class="help-body"> ... </div>
+  inside the help modal in index.html with this content
+  ============================================================ -->
+
+<div class="help-body">
+
+  <!-- Welcome -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Welcome
+    </div>
+    <div class="help-desc">
+      BSCS1B TaskHub is your class task tracker. Admins post tasks and announcements. Students view, track progress, and get notified — no account needed.
+    </div>
+  </div>
+
+  <!-- Roles -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      User 
+    </div>
+    <div class="help-desc">
+      <strong>User</strong> — default, no login. View tasks, mark done, use filters, enable notifications.<br><br>
+  
+    </div>
+  </div>
+
+  <!-- Notifications -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Push Notifications
+    </div>
+    <div class="help-desc">
+      Tap the <strong>🔔 bell</strong> to enable. Two types of notifications:<br><br>
+      <strong>Daily reminders</strong> — alerts for overdue, today, and upcoming tasks. Skips tasks you already marked done.<br><br>
+      <strong>Instant cancel alert</strong> — fires immediately when an admin cancels a task, even if the app is closed. Skips users who already marked it done.<br><br>
+      A dot on the bell means it's active. Tap again to disable. Only needs to be enabled once.
+    </div>
+  </div>
+
+  <!-- Featured Panel -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Featured Panel
+    </div>
+    <div class="help-desc">
+      Shows your most urgent tasks — <strong>overdue, today, and due within 3 days</strong> — as a scrollable carousel. Swipe manually or tap the dots to navigate. Touch/hover pauses auto-scroll.<br><br>
+      The <strong>"X of Y active"</strong> badge shows how many urgent tasks need attention. Tap any card to jump to it in the list.<br><br>
+      Admin notes appear above the carousel and expire automatically after 1–7 days.
+    </div>
+  </div>
+
+  <!-- Daily Tip -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Daily Tip
+    </div>
+    <div class="help-desc">
+      A tip shown below the carousel. Changes 3× a day — 8am, 12pm, and 6pm (PHT).
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      Filters
+    </div>
+    <div class="help-item">
+      <span class="help-badge badge-active">Active</span>
+      <span>Default. Not done, not overdue.</span>
+    </div>
+    <div class="help-item">
+      <span class="help-badge badge-all">All</span>
+      <span>Every task — active, done, overdue.</span>
+    </div>
+    <div class="help-item">
+      <span class="help-badge badge-soon">Soon</span>
+      <span>Due within 3 days.</span>
+    </div>
+    <div class="help-item">
+      <span class="help-badge badge-today">Today</span>
+      <span>Due today — top priority.</span>
+    </div>
+    <div class="help-item">
+      <span class="help-badge badge-overdue">Overdue</span>
+      <span>Past deadline. Pulses red.</span>
+    </div>
+    <div class="help-item">
+      <span class="help-badge badge-done">Done</span>
+      <span>Marked complete on this device.</span>
+    </div>
+    <div class="help-item">
+      <span class="help-badge badge-cancelled">Cancelled</span>
+      <span>Cancelled by admin. Kept for reference.</span>
+    </div>
+  </div>
+
+  <!-- Task Cards -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6M12 9v6"/></svg>
+      Task Cards
+    </div>
+    <div class="help-desc">
+      Each card shows the name, category, due date, and status. Tap <strong>View</strong> (eye icon) to expand — shows full description, images, and action buttons. Tap the <strong>close icon</strong> to collapse. A creator chip shows which admin posted it.
+    </div>
+  </div>
+
+  <!-- Mark Done -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+      Marking Tasks Done
+    </div>
+    <div class="help-desc">
+      Tap <strong>✓ Mark Done</strong> to complete a task. Progress is <strong>per-device only</strong> — your done state is independent from classmates. Done tasks are also synced so push reminders skip them. Tap <strong>↩ Undo</strong> to revert.
+    </div>
+  </div>
+
+  <!-- Images -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Images
+    </div>
+    <div class="help-desc">
+      Tap a thumbnail to open the <strong>full-screen lightbox</strong>. Use arrows to browse, counter shows position (e.g. 1 / 3). Admins can add images via <strong>+ Add</strong> and delete via the trash icon in the lightbox.
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Search
+    </div>
+    <div class="help-desc">
+      Tap 🔍 to open the search bar. Searches by name or description within the current filter. Switch to <strong>All</strong> to search across everything.
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Pinned Notes
+    </div>
+    <div class="help-desc">
+      Short announcements posted by admins. Shown above the carousel. Auto-expire after 1, 3, or 7 days. Only the author admin can delete their own note.
+    </div>
+  </div>
+
+  <!-- Theme & Fullscreen -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      Theme, Fullscreen & Refresh
+    </div>
+    <div class="help-desc">
+      <strong>🌙 Moon</strong> — toggle dark/light mode.<br>
+      <strong>⛶ Expand</strong> — fullscreen mode, hides browser UI.<br>
+      <strong>↺ Refresh</strong> — manually reloads and re-syncs from server.
+    </div>
+  </div>
+
+  <!-- Sync -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Sync Status
+    </div>
+    <div class="help-item">
+      <span class="help-sync-dot" style="background:var(--green)"></span>
+      <span><strong>Live</strong> — connected, updates appear instantly.</span>
+    </div>
+    <div class="help-item">
+      <span class="help-sync-dot" style="background:var(--amber)"></span>
+      <span><strong>Syncing</strong> — saving or loading, wait a moment.</span>
+    </div>
+    <div class="help-item">
+      <span class="help-sync-dot" style="background:var(--red)"></span>
+      <span><strong>Offline</strong> — showing cached data. Refresh when back online.</span>
+    </div>
+  </div>
+
+  <!-- Coming Soon -->
+  <div class="help-section">
+    <div class="help-section-title">
+      <svg class="help-section-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Coming Soon / Work in Progress
+    </div>
+    <div class="help-item" style="align-items:flex-start;">
+      <span style="font-size:14px;flex-shrink:0;"></span>
+      <span><strong>iOS Push</strong> — not supported in Safari. Add to Home Screen first (Share → Add to Home Screen), then enable the bell. Requires iOS 16.4+.</span>
+    </div>
+    <div class="help-item" style="align-items:flex-start;">
+      <span style="font-size:14px;flex-shrink:0;"></span>
+      <span><strong>Realtime drops</strong> — if sync disconnects, tap ↺ refresh to reconnect.</span>
+    </div>
+    <div class="help-item" style="align-items:flex-start;">
+      <span style="font-size:14px;flex-shrink:0;"></span>
+      <span><strong>Large images</strong> — no compression yet. Many big photos may slow loading.</span>
+    </div>
+    <div class="help-item" style="align-items:flex-start;">
+      <span style="font-size:14px;flex-shrink:0;"></span>
+      <span><strong>Done state resets</strong> — clears if you clear browser data, use incognito, or switch browsers. Cross-device sync coming soon.</span>
+    </div>
+    <div class="help-item" style="align-items:flex-start;">
+      <span style="font-size:14px;flex-shrink:0;"></span>
+      <span><strong>Search is filter-scoped</strong> — only searches within the active filter. Switch to All to search everything.</span>
+    </div>
+    <div class="help-item" style="align-items:flex-start;">
+      <span style="font-size:14px;flex-shrink:0;"></span>
+      <span><strong>Older Android</strong> — carousel may jump instead of smooth scroll.</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="help-footer-note">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+    Done progress is <strong>per-device only</strong>. Clearing browser data resets it. Add to Home Screen for the best experience!
+  </div>
+
+</div>
+  </div>
+</div>
+
+  <!-- UNSUBSCRIBE CHALLENGE MODAL -->
+<div class="unsub-overlay" id="unsubOverlay" onclick="handleUnsubOverlay(event)">
+  <div class="unsub-modal" id="unsubModal">
+    <div class="unsub-header">
+      <div class="unsub-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          <line x1="1" y1="1" x2="23" y2="23"/>
+        </svg>
+      </div>
+      <div class="unsub-title">Disable Notifications?</div>
+      <div class="unsub-subtitle">Type the exact code below to confirm. Copy-paste is disabled.</div>
+    </div>
+    <div class="unsub-code-wrap">
+      <div class="unsub-code-label">TYPE THIS CODE EXACTLY</div>
+      <span id="unsubCodeText" class="unsub-code-text">Loading…</span>
+    </div>
+    <div class="unsub-input-wrap">
+      <input class="unsub-input" id="unsubInput" type="text"
+        placeholder="Type the code here…"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <div class="unsub-input-hint" id="unsubHint"></div>
+    </div>
+    <div class="unsub-progress-track">
+      <div class="unsub-progress-bar" id="unsubProgressBar"></div>
+    </div>
+    <div class="unsub-actions">
+      <button class="unsub-btn-cancel" onclick="closeUnsubChallenge()">Keep Notifications</button>
+      <button class="unsub-btn-confirm" id="unsubConfirmBtn" onclick="confirmUnsubscribe()" disabled>Disable</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
